@@ -1,4 +1,11 @@
 {-# LANGUAGE TemplateHaskell #-}
+-- | 'derivePersistFieldPB' uses Template Haskell to produce
+--   'Database.Persist.PersistField' instances for types with
+--   'Text.ProtocolBuffers.Reflections.ReflectDescriptor' and
+--   'Text.ProtocolBuffers.WireMessage.Wire' instances just as
+--   'Database.Persist.TH.derivePersistField' produces
+--   'Database.Persist.PersistField' instances for types with 'Read' and 'Show'
+--   instances.
 module Database.Persist.TH.ProtocolBuffers (
     derivePersistFieldPB
   ) where
@@ -14,8 +21,9 @@ strictify x = BS.concat $ BSL.toChunks x
 lazify :: BS.ByteString -> BSL.ByteString
 lazify x = BSL.fromChunks [x]
 
--- | Derive PersistField instances for 'typName'. 'typName' should be an
---   instance of the 'Text.ProtocolBuffers.Reflections.ReflectDescriptor' and
+-- | Derive 'Database.Persist.PersistField' instances for 'typName'. 'typName'
+--   should be an instance of the
+--   'Text.ProtocolBuffers.Reflections.ReflectDescriptor' and
 --   'Text.ProtocolBuffers.WireMessage.Wire' classes.
 derivePersistFieldPB :: String  -- ^ Name of the type to derive instances for.
                      -> Q [Dec]
