@@ -14,8 +14,12 @@ strictify x = BS.concat $ BSL.toChunks x
 lazify :: BS.ByteString -> BSL.ByteString
 lazify x = BSL.fromChunks [x]
 
-derivePersistFieldPB :: String -> Q [Dec]
-derivePersistFieldPB s = do
+-- | Derive PersistField instances for 'typName'. 'typName' should be an
+--   instance of the 'Text.ProtocolBuffers.Reflections.ReflectDescriptor' and
+--   'Text.ProtocolBuffers.WireMessage.Wire' classes.
+derivePersistFieldPB :: String  -- ^ Name of the type to derive instances for.
+                     -> Q [Dec]
+derivePersistFieldPB typName = do
     ss <- [|SqlBlob|]
     tpv <- [|PersistByteString . strictify . messagePut|]
     fpv <- [|\dt v ->
@@ -30,7 +34,7 @@ derivePersistFieldPB s = do
                             Right (msg, _) ->
                               Right msg|]
     return
-        [ InstanceD [] (ConT ''PersistField `AppT` ConT (mkName s))
+        [ InstanceD [] (ConT ''PersistField `AppT` ConT (mkName typName))
             [ FunD (mkName "sqlType")
                 [ Clause [WildP] (NormalB ss) []
                 ]
@@ -38,7 +42,7 @@ derivePersistFieldPB s = do
                 [ Clause [] (NormalB tpv) []
                 ]
             , FunD (mkName "fromPersistValue")
-                [ Clause [] (NormalB $ fpv `AppE` LitE (StringL s)) []
+                [ Clause [] (NormalB $ fpv `AppE` LitE (StringL typName)) []
                 ]
             ]
         ]
