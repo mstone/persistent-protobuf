@@ -1,5 +1,5 @@
 Name:                persistent-protobuf
-Version:             0.1.1
+Version:             0.1.2
 Synopsis:            Template-Haskell helpers for integrating protobufs with persistent.
 Description:         Template-Haskell helpers for integrating protobufs with persistent.
 Homepage:            https://github.com/mstone/persistent-protobuf
@@ -19,11 +19,11 @@ source-repository head
 source-repository this
   type:     git
   location: git://github.com/mstone/persistent-protobuf.git
-  tag:      v0.1.1
+  tag:      v0.1.2
 
 Library
   Exposed-modules:   Database.Persist.TH.ProtocolBuffers
-  Build-Depends:     base >= 4,
+  Build-Depends:     base == 4.*,
                      bytestring -any,
                      persistent -any,
                      protocol-buffers -any,
