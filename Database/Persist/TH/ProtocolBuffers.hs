@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, OverloadedStrings #-}
 -- | 'derivePersistFieldPB' uses Template Haskell to produce
 --   'Database.Persist.PersistField' instances for types with
 --   'Text.ProtocolBuffers.Reflections.ReflectDescriptor' and
@@ -9,11 +9,12 @@
 module Database.Persist.TH.ProtocolBuffers (
     derivePersistFieldPB
   ) where
-import Database.Persist.Base
+import Database.Persist.Store
 import Language.Haskell.TH.Syntax
 import Text.ProtocolBuffers.WireMessage (messageGet, messagePut)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
+import qualified Data.Text as T
 
 strictify :: BSL.ByteString -> BS.ByteString
 strictify x = BS.concat $ BSL.toChunks x
@@ -36,9 +37,9 @@ derivePersistFieldPB typName = do
                     Right s' ->
                         case (messageGet . lazify) s' of
                             Left e ->
-                              Left $ "Invalid " ++ dt ++ ": " ++ e
+                              Left $ T.concat ["Invalid ", dt, ": ", T.pack e]
                             Right (_, x) | BSL.length x /= 0 ->
-                              Left $ "Invalid " ++ dt ++ ": " ++ "excess input"
+                              Left $ T.concat ["Invalid ", dt, ": excess input"]
                             Right (msg, _) ->
                               Right msg|]
     return

@@ -25,7 +25,7 @@ Library
   Exposed-modules:   Database.Persist.TH.ProtocolBuffers
   Build-Depends:     base == 4.*,
                      bytestring -any,
-                     persistent -any,
+                     persistent == 0.8.*,
                      protocol-buffers -any,
                      protocol-buffers-descriptor -any,
                      template-haskell -any,
